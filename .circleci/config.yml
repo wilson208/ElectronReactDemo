@@ -11,6 +11,8 @@ jobs:
           keys:
           - node-modules-{{ checksum "package.json" }}
         
+      - run: sudo apt-get install libgtk-3-0
+
       - run:
           name: 'Build Package'
           command: |
