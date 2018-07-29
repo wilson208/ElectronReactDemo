@@ -6,24 +6,40 @@ jobs:
 
     steps:
       - checkout
+        
+      - run: 
+          name: 'Install Dependencies'
+          command: | 
+            sudo apt-get install -y libgtk-3-0 libxss1 libgconf2-4 libnss3 libasound2 icnsutils graphicsmagick
 
       - restore_cache:
           keys:
           - node-modules-{{ checksum "package.json" }}
-        
-      - run: sudo apt-get install libgtk-3-0
 
       - run:
-          name: 'Build Package'
+          name: 'NPM Install'
           command: |
             npm install
-            npm test
-            npm run pack:all
-
-      - store_artifacts:
-          path: dist
 
       - save_cache:
           paths:
             - node_modules
           key: node-modules-{{ checksum "package.json" }}
+
+      - run:
+          name: 'Build Windows Package'
+          command: |
+            npm run pack:win
+            mv dist dist-win
+
+      - store_artifacts:
+          path: dist-win
+
+      - run:
+          name: 'Build Windows Package'
+          command: |
+            npm run pack:mac
+            mv dist dist-osx
+
+      - store_artifacts:
+          path: dist-osx
